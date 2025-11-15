@@ -16,10 +16,10 @@ const KING_SUN_API_URL = "https://script.google.com/macros/s/AKfycbwVHgHgICiuUvq
 
 // ==============================================
 // MOT D'ORDRE FINAL - SECTION 1 & 6 : DESIGN & ARCHITECTURE
+// (CORRECTION v3: Utilisation de dangerouslySetInnerHTML pour le CSS)
 // ==============================================
 
-const UltraLuxeStyles = () => (
-  <style>{`
+const cssStyles = `
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Urbanist:wght@300;400;500;600;700&display=swap');
     
     :root {
@@ -95,7 +95,10 @@ const UltraLuxeStyles = () => (
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-  `}</style>
+`;
+
+const UltraLuxeStyles = () => (
+  <style dangerouslySetInnerHTML={{ __html: cssStyles }} />
 );
 
 // ==============================================

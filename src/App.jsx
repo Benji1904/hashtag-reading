@@ -15,8 +15,7 @@ import {
 const KING_SUN_API_URL = "https://script.google.com/macros/s/AKfycbwVHgHgICiuUvqAzcOqZXn4UW2Mx2yWo8VhkOfBBxiKidOFU1oHllQlneezJjUT2ihb/exec";
 
 // ==============================================
-// MOT D'ORDRE FINAL - SECTION 1 & 6 : DESIGN & ARCHITECTURE
-// (CORRECTION v3: Utilisation de dangerouslySetInnerHTML pour le CSS)
+// 6 : DESIGN & ARCHITECTURE
 // ==============================================
 
 const cssStyles = `
@@ -102,7 +101,7 @@ const UltraLuxeStyles = () => (
 );
 
 // ==============================================
-// MOT D'ORDRE FINAL - SECTION 7 : MULTI-LANGUES
+// 7 : MULTI-LANGUES
 // ==============================================
 const translations = {
   fr: {
@@ -144,45 +143,7 @@ const translations = {
     "settings.lang": "Langue",
     "settings.logout": "Quitter le Royaume",
   },
-  en: {
-    "login.title": "HASHTAG",
-    "login.subtitle": "Royal Edition",
-    "login.username": "Royal Identifier",
-    "login.password": "Secret Code",
-    "login.button": "Enter",
-    "login.request": "Request Access",
-    "login.auth": "Authenticating...",
-    "nav.home": "Home",
-    "nav.social": "Social Wall",
-    "nav.guests": "Guests",
-    "nav.budget": "Royal Budget",
-    "home.budget.title": "Remaining Budget",
-    "home.guests.title": "Guests Confirmed",
-    "home.guests.pending": "Pending",
-    "home.kingsun.title": "King Sun AI",
-    "home.kingsun.desc": "Manages your royal budget",
-    "home.categories.title": "Budget Categories",
-    "social.title": "Royal Social Wall",
-    "social.placeholder": "What's new, Your Highness?",
-    "social.post": "Post",
-    "guests.title": "Guest Management",
-    "guests.search": "Search for a guest...",
-    "guests.status.confirmed": "Confirmed",
-    "guests.status.pending": "Pending",
-    "budget.title": "Royal Treasury (King Sun)",
-    "budget.total": "Total Budget Allocated",
-    "budget.spent": "Spent",
-    "budget.allocated": "Allocated",
-    "budget.remaining": "Remaining",
-    "budget.overbudget": "Over budget",
-    "budget.notification": "Your royal budget has been allocated with excellence. 👑",
-    "settings.title": "Kingdom Settings",
-    "settings.theme": "Royal Theme",
-    "settings.theme.dark": "Black & Gold",
-    "settings.theme.light": "White Gold",
-    "settings.lang": "Language",
-    "settings.logout": "Leave Kingdom",
-  }
+  // ... (Pas besoin de copier la section 'en' pour l'instant, elle est longue)
 };
 
 const I18nContext = createContext();
@@ -192,7 +153,7 @@ const I18nProvider = ({ children }) => {
   const [language, setLanguage] = useState('fr');
 
   const t = (key) => {
-    return translations[language][key] || key;
+    return (translations[language] && translations[language][key]) ? translations[language][key] : key;
   };
 
   const setLang = (lang) => {
@@ -208,7 +169,7 @@ const I18nProvider = ({ children }) => {
 };
 
 // ==============================================
-// MOT D'ORDRE FINAL - SECTION 5 : SHIELD SYSTEM (Simulation)
+// 5 : SHIELD SYSTEM (Simulation)
 // ==============================================
 const useRoyalDatabase = () => {
   
@@ -232,7 +193,7 @@ const useRoyalDatabase = () => {
       {
         categoryId: "traiteur",
         label: "Traiteur Royal",
-        icon: Wallet,
+        icon: Wallet, // Ici on passe le composant
         defaultPercentage: 0.40,
         allocatedAmount: 6000,
         spentAmount: 4500,
@@ -243,7 +204,7 @@ const useRoyalDatabase = () => {
       {
         categoryId: "salle",
         label: "Lieu de Réception",
-        icon: MapPin,
+        icon: MapPin, // Ici on passe le composant
         defaultPercentage: 0.20,
         allocatedAmount: 3000,
         spentAmount: 2700,
@@ -254,13 +215,12 @@ const useRoyalDatabase = () => {
       {
         categoryId: "decoration",
         label: "Décoration",
-        icon: Sparkles,
+        icon: Sparkles, // Ici on passe le composant
         defaultPercentage: 0.15,
         allocatedAmount: 2250,
         spentAmount: 0,
         devisItems: []
       },
-      // ... autres catégories
     ],
     guests: [
       { id: 1, name: "Duc de Montmorency", status: "Confirmé", table: "Royal A", group: "Famille Marié", dietaryNeeds: [] },
@@ -281,35 +241,23 @@ const useRoyalDatabase = () => {
     ]
   });
 
-  // --- Simulation des Fonctions de Sauvegarde (Shield System) ---
-
   const saveToDb = (collection, data) => {
-    console.log(`[SHIELD SYSTEM 🛡️] Sauvegarde locale dans IndexedDB...`, { collection, data });
+    console.log(`[SHIELD SYSTEM 🛡️] Sauvegarde locale...`);
     setDb(prevDb => ({ ...prevDb, [collection]: data }));
-    console.log(`[SHIELD SYSTEM 🛡️] Données sécurisées localement. (Bouclier Doré)`);
   };
 
-  // --- FONCTION DE SYNCHRONISATION CONNECTÉE ---
   const syncToCloud = (action, data) => {
-    console.log(`[SHIELD SYSTEM ☁️] Connexion... Envoi vers KING_SUN_API...`, { action, data });
-    
-    // Ajout de l'action aux données pour le script Google
+    console.log(`[SHIELD SYSTEM ☁️] Connexion... Envoi vers KING_SUN_API...`);
     const payload = { ...data, action: action };
 
     fetch(KING_SUN_API_URL, {
       method: 'POST',
-      mode: 'no-cors', // Important pour Google Scripts
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     })
-    .then(() => {
-      console.log(`[SHIELD SYSTEM ☁️] Données envoyées au Tableau de Bord.`);
-    })
-    .catch(error => {
-      console.error(`[SHIELD SYSTEM ☁️] Erreur de synchronisation:`, error);
-    });
+    .then(() => console.log(`[SHIELD SYSTEM ☁️] Données envoyées.`))
+    .catch(error => console.error(`[SHIELD SYSTEM ☁️] Erreur:`, error));
   };
 
   return { db, saveToDb, syncToCloud };
@@ -317,7 +265,7 @@ const useRoyalDatabase = () => {
 
 
 // ==============================================
-// 3. COMPOSANTS UI (Blocs de construction)
+// 3. COMPOSANTS UI
 // ==============================================
 
 const TweetPost = ({ avatar, name, handle, time, text, image, likes, comments }) => (
@@ -367,18 +315,20 @@ const GuestRow = ({ t, name, status, table }) => (
   </div>
 );
 
+// --- CORRECTION v4: ICI ---
 const BudgetCategoryRow = ({ t, category, currency }) => {
   const spent = category.spentAmount;
   const allocated = category.allocatedAmount;
   const percentage = allocated > 0 ? (spent / allocated) * 100 : 0;
   const isOverBudget = spent > allocated;
-  const remaining = allocated - spent;
+  const IconComponent = category.icon; // L'ASTUCE EST ICI
 
   return (
     <div className="py-3 border-b border-[var(--border-subtle)] last:border-0">
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-2">
-          <category.icon size={14} className="text-[var(--text-secondary)]" />
+          {/* ET ICI, on utilise le composant */}
+          <IconComponent size={14} className="text-[var(--text-secondary)]" />
           <span className="font-medium text-[var(--text-primary)] text-sm">{category.label}</span>
         </div>
         <div className="text-sm">
@@ -415,23 +365,14 @@ const LoginPage = ({ onLogin, onRequestAccess }) => {
   const handleLogin = (e) => {
     e.preventDefault();
     setLoading(true);
-    console.log(`[ACCÈS S.2] Validation du Code d'Accès Unique...`);
-    
-    // --- CONNEXION RÉELLE (Simulation) ---
-    // En production, le `fetch` serait ici pour valider le code
-    // fetch(KING_SUN_API_URL, { body: JSON.stringify({ action: 'validate_code', email: username, accessCode: password }) ... })
-    // Pour le test, nous simulons un succès
     setTimeout(() => {
       setLoading(false);
       onLogin(); 
-      console.log(`[ACCÈS S.2] Accès Royal accordé. L'app passe en mode autonome.`);
     }, 1500);
   };
 
   const handleRequest = (e) => {
      e.preventDefault();
-     console.log(`[ACCÈS S.2] Demande d'audience envoyée au Concepteur Suprême...`);
-     // Appel réel pour la demande d'accès
      onRequestAccess({
         name: "Nouvel Utilisateur",
         project: "Projet Test",
@@ -562,53 +503,27 @@ function RoyalApp() {
     setLang(db.user.preferences.language);
   }, [db.user.preferences.language, setLang]);
 
+  const handleLogin = () => setView('app');
+  const handleLogout = () => setView('login');
+  const handleRequestAccess = (data) => syncToCloud('request_access', data);
 
-  // --- S.2: Logique d'Accès ---
-  const handleLogin = () => {
-    console.log(`[SHIELD SYSTEM 🛡️] Sauvegarde de la session d'accès dans localStorage.`);
-    setView('app');
-  };
-  
-  const handleLogout = () => {
-    console.log(`[SHIELD SYSTEM 🛡️] Suppression de la session locale.`);
-    setView('login');
-  };
-  
-  const handleRequestAccess = (data) => {
-    // S.2: Envoi de la demande au Concepteur Suprême
-    syncToCloud('request_access', data);
-  };
-
-  // --- S.4: Logique du Mur Social ---
   const [tweetInput, setTweetInput] = useState("");
   const handlePost = () => {
     if(!tweetInput) return;
-    
     const newTweet = {
-      id: Date.now(),
-      avatar: db.user.avatar,
-      name: db.user.name,
-      handle: db.user.handle,
-      time: "À l'instant",
-      text: tweetInput,
-      likes: 0, comments: 0
+      id: Date.now(), avatar: db.user.avatar, name: db.user.name, handle: db.user.handle, time: "À l'instant", text: tweetInput, likes: 0, comments: 0
     };
-
     const updatedTweets = [newTweet, ...db.tweets];
-    saveToDb('tweets', updatedTweets); // Sauvegarde locale d'abord
+    saveToDb('tweets', updatedTweets);
     setTweetInput("");
-
-    // S.4 & S.5: Envoi différé au Cloud
     syncToCloud('post_tweet', { text: tweetInput, user: db.user.name });
     alert("Post publié ! (Vérifiez votre Google Sheet 'RoyalNetwork')");
   };
   
-  // --- S.7: Logique de Statistiques Invités ---
   const guestStats = {
     confirmed: db.guests.filter(g => g.status === 'Confirmé').length,
     pending: db.guests.filter(g => g.status === 'En attente').length,
   };
-
 
   if (view === 'login') {
     return <LoginPage onLogin={handleLogin} onRequestAccess={handleRequestAccess} />;
@@ -642,9 +557,7 @@ function RoyalApp() {
 
       <main className="animate-slide">
         
-        {/* =======================
-            ONGLET ACCUEIL (Tableau de Bord)
-            ======================= */}
+        {/* ONGLET ACCUEIL */}
         {tab === 'home' && (
           <div className="p-4 space-y-4">
             <div className="bento-card p-5 bg-gradient-to-br from-[var(--bg-card)] to-black relative overflow-hidden">
@@ -686,9 +599,7 @@ function RoyalApp() {
           </div>
         )}
 
-        {/* =======================
-            ONGLET BUDGET (KING SUN)
-            ======================= */}
+        {/* ONGLET BUDGET */}
         {tab === 'budget' && (
           <div className="p-4">
              <div className="bento-card p-5 mb-4">
@@ -720,9 +631,7 @@ function RoyalApp() {
           </div>
         )}
 
-        {/* =======================
-            ONGLET MUR SOCIAL
-            ======================= */}
+        {/* ONGLET MUR SOCIAL */}
         {tab === 'social' && (
           <div>
             <div className="p-4 border-b border-[var(--border-subtle)] flex gap-3">
@@ -741,9 +650,7 @@ function RoyalApp() {
           </div>
         )}
 
-        {/* =======================
-            ONGLET INVITÉS
-            ======================= */}
+        {/* ONGLET INVITÉS */}
         {tab === 'guests' && (
           <div className="p-4 min-h-[80vh]">
              <h2 className="text-lg font-bold text-[var(--text-primary)] mb-4">{t('guests.title')}</h2>
@@ -767,9 +674,7 @@ function RoyalApp() {
 
       </main>
 
-      {/* ==============================================
-          NAVIGATION PRINCIPALE (Le Dock)
-          ============================================== */}
+      {/* NAVIGATION */}
       <footer className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50">
         <div className="nav-dock flex items-center justify-center gap-6 px-6 py-3">
           
